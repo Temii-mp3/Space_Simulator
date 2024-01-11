@@ -17,16 +17,20 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         final double GRAVITATIONAL_CONSTANT = 6.67430E-11;
+        final double AU = 149.6e6 * 1000; //Distance from earth to sun (converted to meters)
+         final double SCALE = 250/AU; //1AU = 100 pixels
+
 //        final double SCALE_FACTOR = 1.7857142857142857E-4;
         //setting the width of the screen
-        final double SCREEN_WIDTH = 1920.0;
+        final double SCREEN_WIDTH = 800;
         //setting the height of the screen
-        final double SCREEN_HEIGHT = 1080.0;
+        final double SCREEN_HEIGHT = 800;
 
         Group rootGroup = new Group();
 
@@ -38,26 +42,48 @@ public class HelloApplication extends Application {
 
 
         Group celestialBodies = new Group();
-       Star sun = new Star(1.989E30, 100, SCREEN_WIDTH, SCREEN_HEIGHT);
-       Planet earth = new Planet(SCREEN_WIDTH,SCREEN_HEIGHT, 50,50, Math.toRadians(45), 200,0.0, sun);
+        ArrayList<Planet> planets = new ArrayList<>();
+       Star sun = new Star(1.989E30, 30, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        Timeline timeline = new Timeline();
+       Planet earth = new Planet("Earth", -1*AU,0, 5.9742e24,16,0.0,0.0, 0.0, 0.0,sun);
+       //earth.setY_VELOCITY(29);
+       Planet mars = new Planet("Mars", -1.524 * AU ,0, 6.39e23,12, 0.0,0.0, 0.0, 0.0,sun);
+       //mars.setY_VELOCITY(47.4 * 1000);
+       Planet mecury  = new Planet("Mecury", 0.387 * AU ,0, 3.30e23,8, 0.0,0.0, 0.0, 0.0,sun);
+       //mecury.setY_VELOCITY(-47.4 * 1000);
+       Planet venus = new Planet("Venus", 0.723 * AU,0, 4.8685e24,14, 0.0 ,0.0, 0.0, 0.0,sun);
+//       venus.setY_VELOCITY(-35.02 * 1000);
+       planets.add(earth);
+       planets.add(mars);
+       planets.add(mecury);
+       planets.add(venus);
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.1), actionEvent -> {
-            double gravitationalForce = (GRAVITATIONAL_CONSTANT * sun.getSOLAR_MASS())/ Math.pow(earth.getDISTANCE(),2);
-            earth.setANGULAR_VELOCITY(gravitationalForce);
-            earth.setANGLE(Math.toRadians(earth.getANGULAR_VELOCITY()));
-            earth.updatePosition();
-        });
-
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+//        Timeline timeline = new Timeline();
+//
+//        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.1), actionEvent -> {
+//            for (Planet p : planets){
+//                sun.calculateSunAttraction(planets);
+//                p.updatePosition(planets);
+//                //System.out.println(p.getXAXIS());
+//                //System.out.println(p.getYAXIS());
+//
+//            }
+//
+//        });
+//
+//        timeline.getKeyFrames().add(keyFrame);
+//        timeline.setCycleCount(Animation.INDEFINITE);
+//        timeline.play();
 
        System.out.println(sun.getStarYPosition());
-        System.out.println(sun.getStarXPosition());
+       System.out.println(sun.getStarXPosition());
 
-        celestialBodies.getChildren().addAll(sun.getNewStar(), earth.getPlanet());
+
+        celestialBodies.getChildren().addAll(sun.getNewStar());
+        //add all planets to the celestialBodies scene
+        for(Planet p : planets){
+            celestialBodies.getChildren().add(p.getPlanet());
+        }
 
         rootGroup.getChildren().addAll(viewImg, celestialBodies);
 
